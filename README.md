@@ -2,3 +2,6 @@
 Repository containing the full set of scripts for the generation and visualization of the computational analyses in [Costea et al., 2024](https://doi.org/10.1101/2024.06.24.600391).
 
 The scripts are organized according to the figures in the publication.
+
+The raw data can be accessed here: https://ega-archive.org/studies/EGAS50000000582
+
