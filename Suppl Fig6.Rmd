@@ -1,0 +1,179 @@
+---
+title: "Figure DRP"
+output: html_document
+date: '2025-02-17'
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+# Load functions
+library("readxl")
+library("dplyr")
+library(ggplot2)
+library(gghighlight)
+library(ggbeeswarm)
+library(tidyr)
+library(patchwork)
+library(ggsignif)
+library(GGally)
+library(ggpubr)
+```
+
+```{python}
+import lmfit
+import pandas as pd
+import numpy as np
+from sklearn import metrics
+data = pd.read_excel("dose_response.xlsx") #output BIAS analysis: cell viability normalized to DMSO control, see Supplementary Table 7
+```
+
+
+```{python}
+LOGIC50_START = 2.5
+LOGIC50_MAX = 6
+LOGIC50_MIN = -2
+
+N_START = -1
+N_MIN = -2.5
+N_MAX = 0
+```
+
+```{python}
+def logdose_response_inhibition(logconc_nM, logIC50, Imax, n, Itop):
+    """Generate drug response data (logconc_nM, logIC50, Imax, n, Itop)
+    Dose response model with logarithmic concentrations, variable slope and adjustable minimum and maximum inhibition.  
+    
+    Parameters
+    ----------
+    conc : array-like
+        concentrations in log10(conc_nM)
+    logIC50 : float
+        Log10 of concentration at half-maximal inhibition
+    Imax : float
+        maximal inhibition relative to DMSO
+    n : float
+        Hill coefficient (negative slope if n<0)
+    Itop : float
+        minimal inhibition (top of the inhibition curve)
+
+    Returns
+    -------
+    array-like
+        dose response curve evaluated at each element of conc
+    """
+    return Imax + (Itop - Imax) / (1 + 10 ** ((logIC50 - logconc_nM) * n))
+```
+
+
+```{python}
+# Dose Response curve fitting (dose_response_df, vary_Itop=False) with a Non-Linear Least-Squares Minimization and Curve-Fitting for Python
+def fit_dose_response(dose_response_df, vary_Itop = False):
+    """Fit a dose response curve
+
+    Parameters
+    ----------
+    dose_response_df : pandas.DataFrame
+        dataframe containing drug concentrations in nM and normalized cell counts
+    vary_Itop : bool
+        vary the Itop parameter (baseline at low drug concentration) during fitting;
+            if False Itop=1
+    """
+    dose_resp_model = lmfit.Model(
+        logdose_response_inhibition,
+    )
+    dose_resp_model.set_param_hint("logIC50", value=LOGIC50_START, min=LOGIC50_MIN, max=LOGIC50_MAX)
+    dose_resp_model.set_param_hint("Itop", value=1, min=0, max=1, vary=vary_Itop)
+    dose_resp_model.set_param_hint("Imax", value=0, min=0, max=1)
+    dose_resp_model.set_param_hint("n", value=N_START, min=N_MIN, max=N_MAX, vary=True)
+    dose_response_df = dose_response_df
+    modelresult = dose_resp_model.fit(
+        dose_response_df["norm_response"],
+        logconc_nM=np.log10(dose_response_df["conc_nM"].astype(float)),
+        method="nelder",
+        nan_policy="omit",
+    )
+    return modelresult
+```
+
+```{python}
+mdl = fit_dose_response(data)
+pred_x = np.arange(LOGIC50_MIN, LOGIC50_MAX, (LOGIC50_MAX-LOGIC50_MIN)/(50-1))
+pred_y = logdose_response_inhibition(pred_x, **mdl.values)
+metrics.auc(pred_x, pred_y)
+```
+
+
+```{r}
+#Suppl Fig6a: Plot Cytarabine Initial vs Relapse (logAUC)
+Initial <- c(3.5385306122449, 6.67485714285714, 3.77477551020408, 4.33983673469388, 5.81159183673469, 5.48440816326531, 5.3214693877551) 
+Relapse <- c(3.58530612244898, 6.73697959183673, 4.39738775510204, 7.53681632653061, 6.74310204081632, 6.68383673469388, 6.35910204081633)
+
+my_data <- data.frame( 
+  Disease_Stage = rep(c("Initial", "Relapse"), each = 7),
+  logAUC = c( Initial, Relapse)
+)
+
+comparing_groups <- list(c("Initial", "Relapse") ) 
+p <- ggpaired(my_data, x = "Disease_Stage", y = "logAUC", add = "dotplot", color = "Disease_Stage", palette =c("#56B4E9", "#56B4E9"), ylab = "logAUC", xlab = "Disease Stage")  
+png('/g/korbel/Costea/Manuscript/figures/images/Fig6/DRP_Cytarabine_barplot.png',width=4000,height=2500,res=600)
+p + stat_compare_means(comparisons = comparing_groups, label.y = 8, method = "t.test", paired = TRUE, label = "p.format") + theme(plot.title = element_text(hjust = 0.5, face="bold")) + theme(text =element_text(size = 15)) + NoLegend() + ggtitle("Cytarabine")
+dev.off()
+```
+
+
+```{r}
+#Suppl Fig6b: Plot FX1 Initial vs Relapse (logAUC)
+Initial <- c(6.05061224489796, 8.0, 7.76808163265306, 6.22881632653061, 8.0, 5.58775510204082)
+Relapse <- c(6.58432653061224, 7.768, 7.62130612244898, 6.10857142857143, 7.55102040816326, 4.34922448979592)
+
+my_data <- data.frame( 
+  Disease_Stage = rep(c("Initial", "Relapse"), each = 6),
+  logAUC = c( Initial, Relapse)
+)
+
+comparing_groups <- list(c("Initial", "Relapse") ) 
+p <- ggpaired(my_data, x = "Disease_Stage", y = "logAUC", add = "dotplot", color = "Disease_Stage", palette =c("#56B4E9", "#56B4E9"), ylab = "logAUC", xlab = "Disease Stage")  
+png('/g/korbel/Costea/Manuscript/figures/images/Fig6/DRP_FX1_barplot.png',width=4000,height=2500,res=600)
+p + stat_compare_means(comparisons = comparing_groups, label.y = 8, method = "t.test", paired = TRUE, label = "p.signif") + theme(plot.title = element_text(hjust = 0.5, face="bold")) + theme(text =element_text(size = 15)) + NoLegend() + ggtitle("FX1")
+dev.off()
+```
+
+
+```{r}
+#Suppl Fig6c: Plot Venetoclax Initial vs Relapse (logAUC)
+Initial <- c(3.71771428571428, 5.31461224489796, 5.41028571428571, 4.91012244897959, 5.78514285714286, 4.91616326530612)
+Relapse <- c(4.96873469387755, 5.35461224489796, 6.04016326530612, 5.09485714285714, 5.96171428571428, 1.61444897959184)
+
+my_data <- data.frame( 
+  Disease_Stage = rep(c("Initial", "Relapse"), each = 6),
+  logAUC = c( Initial, Relapse)
+)
+
+comparing_groups <- list(c("Initial", "Relapse") ) 
+p <- ggpaired(my_data, x = "Disease_Stage", y = "logAUC", add = "dotplot", color = "Disease_Stage", palette =c("#56B4E9", "#56B4E9"), ylab = "logAUC", xlab = "Disease Stage")  
+png('/g/korbel/Costea/Manuscript/figures/images/Fig6/DRP_Venetoclax_barplot.png',width=4000,height=2500,res=600)
+p + stat_compare_means(comparisons = comparing_groups, label.y = 8, method = "t.test", paired = TRUE, label = "p.signif") + theme(plot.title = element_text(hjust = 0.5, face="bold")) + theme(text =element_text(size = 15)) + NoLegend() + ggtitle("Venetoclax")
+dev.off()
+```
+
+
+```{r} 
+#Suppl Fig6d: Plot S-6345 Initial vs Relapse (logAUC)
+Initial <- c(3.78897959183673, 4.51967346938775, 3.76367346938775, 4.23959183673469, 4.91020408163265, 4.06506122448979)
+Relapse <- c(4.49248979591837, 5.10130612244898, 4.88179591836735, 5.2044081632653, 5.39648979591837, 3.47265306122449)
+
+my_data <- data.frame( 
+  Disease_Stage = rep(c("Initial", "Relapse"), each = 6),
+  logAUC = c( Initial, Relapse)
+)
+
+comparing_groups <- list(c("Initial", "Relapse") ) 
+p <- ggpaired(my_data, x = "Disease_Stage", y = "logAUC", add = "dotplot", color = "Disease_Stage", palette =c("#56B4E9", "#56B4E9"), ylab = "logAUC", xlab = "Disease Stage")  
+png('/g/korbel/Costea/Manuscript/figures/images/Fig6/DRP_S-63845_barplot.png',width=4000,height=2500,res=600)
+p + stat_compare_means(comparisons = comparing_groups, label.y = 8, method = "t.test", paired = TRUE, label = "p.signif") + theme(plot.title = element_text(hjust = 0.5, face="bold")) + theme(text =element_text(size = 15)) + NoLegend() + ggtitle("S-63845")
+dev.off()
+```
+
