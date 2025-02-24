@@ -124,8 +124,24 @@ png('../../../../../../Manuscript/figures/images/Fig3/DGEtop10.png',width=9000,h
 print(combined_plot)
 dev.off()
 
+combined_plot <- wrap_plots(plots, ncol = 2) + 
+  plot_annotation(
+    title = "Enrichment of TAL1 top10 stem-like markers in cells of all subgroups",
+    theme = theme(plot.title = element_text(size = 20, face = "bold", hjust = 0.5))
+  )
+
+png('../../../../../Manuscript/figures/images/Fig3/DGEtop10_flipped.png',width=7000,height=11000,res=600)
+print(combined_plot)
+dev.off()
 
 
+##Suppl Fig 3d:
+DefaultAssay(obj.subgroups) <- "scenic"
+Idents(obj.subgroups) <- "Patients"
+features = c("FOSL2", "ETS1", "KLF2", "NFKB1", "ZMIZ1", "FLI1", "KLF6", "FOS", "FOXO1", "RELB", "JUN", "NFKB2", "FOSB", "E2F3", "E2F2", "BRCA1", "E2F1", "TFDP1")
+png('../../../../../../Manuscript/figures/images/Fig3/regulon_per_patient_dotplot.png',width=6500,height=5500,res=600)
+DotPlot(obj.subgroups, features = features, dot.scale = 10) + scale_colour_gradient2(low = "#FF00FF", mid = "#000000", high = "#FFFF00") + RotatedAxis() + ggtitle("Regulon Activity per Patient") + labs(colour="Average Regulon Activity") +  theme(plot.title = element_text(hjust = 0.5, face="bold"))  + theme(text =element_text(size = 20)) & scale_y_discrete(limit=c("P41","P63", "P6","P8", "P10",  "P1", "P3", "P59", "P2", "P12", "P7", "P52", "P68", "P11",  "P5",  "P27", "P9", "P4")) &xlab("TFs")
+dev.off()
 
 
 

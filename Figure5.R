@@ -778,94 +778,160 @@ total.P7 <- RunUMAP(total.P7, dims = 1:30)
 
 
 ##Fig 5a-c
+#load object containing al patients with stemness marker values
+obj.subgroups <- readRDS("/g/korbel/Costea/Computational/SCENIC/2023July_TALL_Julia/total_allsubgroups_after_integration_44k_genes.rds") ##see figure3 for scenic object containing all subgroups
 #P6
-total.P6 <- AddModuleScore(total.P6, features = list(stemness.marker), name = "stemness_marker")
-png('../../../../../../Manuscript/figures/images/Fig3/Stemness_P6_vlnplot.png',width=3500,height=2500,res=600)
+# Extract stemness marker values for cells belonging to P6
+setwd("/g/korbel/Costea/Computational/VASAseq_data/TAL1_TALL/All_samples/")
+p6_cells <- rownames(obj.subgroups@meta.data)[obj.subgroups@meta.data$Patients == "P6"]
+stemness_values <- obj.subgroups@meta.data[p6_cells, "stemness_marker1", drop = FALSE]
+# Ensure total.P6 contains the same cells
+matching_cells <- intersect(rownames(total.P6@meta.data), rownames(stemness_values))
+# Transfer the values
+total.P6@meta.data[matching_cells, "stemness_marker1"] <- stemness_values[matching_cells, , drop = FALSE]
+#generate plots
+png('../../../../Manuscript/figures/images/Fig3/Stemness_P6_vlnplot.png',width=3500,height=2500,res=600)
 VlnPlot(total.P6, features= "stemness_marker1", group.by="seurat_clusters", pt.size = 0, cols = c("0" = "#E69F00", "1" = "#009E73", "2" = "#F0E442", "3" = "#56B4E9")) + NoLegend() + ggtitle("Stemness Score") + theme(plot.title = element_text(hjust = 0.5, face="bold")) +xlab("Cluster") + theme(text =element_text(size = 15)) & geom_hline(yintercept = 0.25, col = 'red', linetype = "dashed") 
 dev.off()
-png('../../../../../../Manuscript/figures/images/Fig3/UMAP_P6.png',width=3500,height=2500,res=600)
+png('../../../../Manuscript/figures/images/Fig3/UMAP_P6.png',width=3500,height=2500,res=600)
 DimPlot(total.P6, reduction = "umap", cols = c("0" = "#E69F00", "1" = "#009E73", "2" = "#F0E442", "3" = "#56B4E9")) + ggtitle ("Cluster") + theme(plot.title = element_text(hjust = 0.5, face="bold"))  + theme(text =element_text(size = 15)) 
 dev.off()
-png('../../../../../../Manuscript/figures/images/Fig3/barplot_P6.png',width=3500,height=2500,res=600)
+png('../../../../Manuscript/figures/images/Fig3/barplot_P6.png',width=3500,height=2500,res=600)
 dittoBarPlot(total.P6, "seurat_clusters", group.by = "Patient", color.panel = c("#E69F00", "#009E73","#F0E442","#56B4E9" )) + ylab("Cluster Frequency")+ xlab("Disease Stage") + ggtitle("") + theme(plot.title = element_text(hjust = 0.5, face="bold")) +  theme(text =element_text(size = 15)) + NoLegend()                                                                                                                                                                                                                                  
 dev.off()
 
 #P8
-total.P8 <- AddModuleScore(total.P8, features = list(stemness.marker), name = "stemness_marker")
-png('../../../../../../Manuscript/figures/images/Fig3/Stemness_P8_vlnplot.png',width=3500,height=2500,res=600)
+# Extract stemness marker values for cells belonging to P8
+setwd("/g/korbel/Costea/Computational/VASAseq_data/TAL1_TALL/All_samples/")
+p8_cells <- rownames(obj.subgroups@meta.data)[obj.subgroups@meta.data$Patients == "P8"]
+stemness_values <- obj.subgroups@meta.data[p8_cells, "stemness_marker1", drop = FALSE]
+# Ensure total.P8 contains the same cells
+matching_cells <- intersect(rownames(total.P8@meta.data), rownames(stemness_values))
+# Transfer the values
+total.P8@meta.data[matching_cells, "stemness_marker1"] <- stemness_values[matching_cells, , drop = FALSE]
+#generate plots
+png('../../../../Manuscript/figures/images/Fig3/Stemness_P8_vlnplot.png',width=3500,height=2500,res=600)
 VlnPlot(total.P8, features= "stemness_marker1", group.by="seurat_clusters", pt.size = 0, cols = c("0" = "#E69F00", "1" = "#009E73", "2" = "#56B4E9", "3" = "#F0E442")) + NoLegend() + ggtitle("Stemness Score") + theme(plot.title = element_text(hjust = 0.5, face="bold")) +xlab("Cluster") + theme(text =element_text(size = 15)) & geom_hline(yintercept = 0.25, col = 'red', linetype = "dashed") 
 dev.off()
-png('../../../../../../Manuscript/figures/images/Fig3/UMAP_P8.png',width=3500,height=2500,res=600)
+png('../../../../Manuscript/figures/images/Fig3/UMAP_P8.png',width=3500,height=2500,res=600)
 DimPlot(total.P8, reduction = "umap", cols = c("0" = "#E69F00", "1" = "#009E73", "2" = "#56B4E9", "3" = "#F0E442")) + ggtitle ("Cluster") + theme(plot.title = element_text(hjust = 0.5, face="bold")) + theme(text =element_text(size = 15)) 
 dev.off()
-png('../../../../../../Manuscript/figures/images/Fig3/barplot_P8.png',width=3500,height=2500,res=600)
+png('../../../../Manuscript/figures/images/Fig3/barplot_P8.png',width=3500,height=2500,res=600)
 dittoBarPlot(total.P8, "seurat_clusters", group.by = "Patient", color.panel = c("#E69F00", "#009E73","#56B4E9","#F0E442" )) + ylab("Cluster Frequency")+ xlab("Disease Stage") + ggtitle("") + theme(plot.title = element_text(hjust = 0.5, face="bold")) +  theme(text =element_text(size = 15)) + NoLegend()                
 dev.off()
 
 #P10
-total.P10 <- AddModuleScore(total.P10, features = list(stemness.marker), name = "stemness_marker")
-png('../../../../../../Manuscript/figures/images/Fig3/Stemness_P10_vlnplot.png',width=3500,height=2500,res=600)
+# Extract stemness marker values for cells belonging to P10
+setwd("/g/korbel/Costea/Computational/VASAseq_data/TAL1_TALL/All_samples/")
+p10_cells <- rownames(obj.subgroups@meta.data)[obj.subgroups@meta.data$Patients == "P10"]
+stemness_values <- obj.subgroups@meta.data[p10_cells, "stemness_marker1", drop = FALSE]
+# Ensure total.P10 contains the same cells
+matching_cells <- intersect(rownames(total.P10@meta.data), rownames(stemness_values))
+# Transfer the values
+total.P10@meta.data[matching_cells, "stemness_marker1"] <- stemness_values[matching_cells, , drop = FALSE]
+#generate plots
+png('../../../../Manuscript/figures/images/Fig3/Stemness_P10_vlnplot.png',width=3500,height=2500,res=600)
 VlnPlot(total.P10, features= "stemness_marker1", group.by="seurat_clusters", pt.size = 0, cols = c("0" = "#E69F00", "1" = "#009E73", "2" = "#56B4E9", "3" = "#F0E442")) + NoLegend() + ggtitle("Stemness Score") + theme(plot.title = element_text(hjust = 0.5, face="bold")) +xlab("Cluster") + theme(text =element_text(size = 15)) & geom_hline(yintercept = 0.25, col = 'red', linetype = "dashed") 
 dev.off()
-png('../../../../../../Manuscript/figures/images/Fig3/UMAP_P10.png',width=3500,height=2500,res=600)
+png('../../../../Manuscript/figures/images/Fig3/UMAP_P10.png',width=3500,height=2500,res=600)
 DimPlot(total.P10, reduction = "umap", cols = c("0" = "#E69F00", "1" = "#009E73", "2" = "#56B4E9", "3" = "#F0E442")) + ggtitle ("Cluster") + theme(plot.title = element_text(hjust = 0.5, face="bold")) + theme(text =element_text(size = 15)) 
 dev.off()
-png('../../../../../../Manuscript/figures/images/Fig3/barplot_P10.png',width=3500,height=2500,res=600)
+png('../../../../Manuscript/figures/images/Fig3/barplot_P10.png',width=3500,height=2500,res=600)
 dittoBarPlot(total.P10, "seurat_clusters", group.by = "Patient", color.panel = c("#E69F00", "#009E73","#56B4E9","#F0E442" )) + ylab("Cluster Frequency")+ xlab("Disease Stage") + ggtitle("") + theme(plot.title = element_text(hjust = 0.5, face="bold")) +  theme(text =element_text(size = 15)) + NoLegend()                                                                                                                                                                                                                                  
 dev.off()
 #P1
-total.P1 <- AddModuleScore(total.P1, features = list(stemness.marker), name = "stemness_marker")
-png('../../../../../../Manuscript/figures/images/Fig3/Stemness_P1_vlnplot.png',width=3500,height=2500,res=600)
+# Extract stemness marker values for cells belonging to P1
+setwd("/g/korbel/Costea/Computational/VASAseq_data/TAL1_TALL/All_samples/")
+p1_cells <- rownames(obj.subgroups@meta.data)[obj.subgroups@meta.data$Patients == "P1"]
+stemness_values <- obj.subgroups@meta.data[p1_cells, "stemness_marker1", drop = FALSE]
+# Ensure total.P1 contains the same cells
+matching_cells <- intersect(rownames(total.P1@meta.data), rownames(stemness_values))
+# Transfer the values
+total.P1@meta.data[matching_cells, "stemness_marker1"] <- stemness_values[matching_cells, , drop = FALSE]
+#generate plots
+png('../../../../Manuscript/figures/images/Fig3/Stemness_P1_vlnplot.png',width=3500,height=2500,res=600)
 VlnPlot(total.P1, features= "stemness_marker1", group.by="seurat_clusters", pt.size = 0, cols = c("0" = "#E69F00", "1" = "#009E73", "2" = "#56B4E9", "3" = "#F0E442", "4" = "#CC79A7", "5" = "#D55E00")) + NoLegend() + ggtitle("Stemness Score") + theme(plot.title = element_text(hjust = 0.5, face="bold")) +xlab("Cluster") + theme(text =element_text(size = 15)) & geom_hline(yintercept = 0.25, col = 'red', linetype = "dashed") 
 dev.off()
-png('../../../../../../Manuscript/figures/images/Fig3/UMAP_P1.png',width=3500,height=2500,res=600)
+png('../../../../Manuscript/figures/images/Fig3/UMAP_P1.png',width=3500,height=2500,res=600)
 DimPlot(total.P1, reduction = "umap", cols = c("0" = "#E69F00", "1" = "#009E73", "2" = "#56B4E9", "3" = "#F0E442", "4" = "#CC79A7", "5" = "#D55E00")) + ggtitle ("Cluster") + theme(plot.title = element_text(hjust = 0.5, face="bold")) + theme(text =element_text(size = 15)) 
 dev.off()
-png('../../../../../../Manuscript/figures/images/Fig3/barplot_P1.png',width=3500,height=2500,res=600)
+png('../../../../Manuscript/figures/images/Fig3/barplot_P1.png',width=3500,height=2500,res=600)
 dittoBarPlot(total.P1, "seurat_clusters", group.by = "Patient", color.panel = c("#E69F00", "#009E73","#56B4E9","#F0E442", "#CC79A7","#D55E00" )) + ylab("Cluster Frequency")+ xlab("Disease Stage") + ggtitle("") + theme(plot.title = element_text(hjust = 0.5, face="bold")) +  theme(text =element_text(size = 15)) + NoLegend()                                                                                                                                                                                                                                  
 dev.off()
 #P3
-total.P3 <- AddModuleScore(total.P3, features = list(stemness.marker), name = "stemness_marker")
-png('../../../../../../Manuscript/figures/images/Fig3/Stemness_P3_vlnplot.png',width=3500,height=2500,res=600)
+# Extract stemness marker values for cells belonging to P3
+setwd("/g/korbel/Costea/Computational/VASAseq_data/TAL1_TALL/All_samples/")
+p3_cells <- rownames(obj.subgroups@meta.data)[obj.subgroups@meta.data$Patients == "P3"]
+stemness_values <- obj.subgroups@meta.data[p3_cells, "stemness_marker1", drop = FALSE]
+# Ensure total.P3 contains the same cells
+matching_cells <- intersect(rownames(total.P3@meta.data), rownames(stemness_values))
+# Transfer the values
+total.P3@meta.data[matching_cells, "stemness_marker1"] <- stemness_values[matching_cells, , drop = FALSE]
+#generate plots
+png('../../../../Manuscript/figures/images/Fig3/Stemness_P3_vlnplot.png',width=3500,height=2500,res=600)
 VlnPlot(total.P3, features= "stemness_marker1", group.by="seurat_clusters", pt.size = 0, cols = c("0" = "#E69F00", "1" = "#009E73", "2" = "#56B4E9", "3" = "#F0E442")) + NoLegend() + ggtitle("Stemness Score") + theme(plot.title = element_text(hjust = 0.5, face="bold")) +xlab("Cluster") + theme(text =element_text(size = 15)) & geom_hline(yintercept = 0.25, col = 'red', linetype = "dashed") 
 dev.off()
-png('../../../../../../Manuscript/figures/images/Fig3/UMAP_P3.png',width=3500,height=2500,res=600)
+png('../../../../Manuscript/figures/images/Fig3/UMAP_P3.png',width=3500,height=2500,res=600)
 DimPlot(total.P3, reduction = "umap", cols = c("0" = "#E69F00", "1" = "#009E73", "2" = "#56B4E9", "3" = "#F0E442")) + ggtitle ("Cluster") + theme(plot.title = element_text(hjust = 0.5, face="bold")) + theme(text =element_text(size = 15)) 
 dev.off()
-png('../../../../../../Manuscript/figures/images/Fig3/barplot_P3.png',width=3500,height=2500,res=600)
+png('../../../../Manuscript/figures/images/Fig3/barplot_P3.png',width=3500,height=2500,res=600)
 dittoBarPlot(total.P3, "seurat_clusters", group.by = "Patient", color.panel = c("#E69F00", "#009E73","#56B4E9","#F0E442" )) + ylab("Cluster Frequency")+ xlab("Disease Stage") + ggtitle("") + theme(plot.title = element_text(hjust = 0.5, face="bold")) +  theme(text =element_text(size = 15)) + NoLegend()                                                                                                                                                                                                                                  
 dev.off()
 #P2
-total.P2 <- AddModuleScore(total.P2, features = list(stemness.marker), name = "stemness_marker")
-png('../../../../../../Manuscript/figures/images/Fig3/Stemness_P2_vlnplot.png',width=3500,height=2500,res=600)
-VlnPlot(total.P2, features= "stemness_marker1", group.by="seurat_clusters", pt.size = 0, cols = c("0" = "#E69F00", "1" = "#009E73", "2" = "#56B4E9")) + NoLegend() + ggtitle("Stemness Score") + theme(plot.title = element_text(hjust = 0.5, face="bold")) +xlab("Cluster") + theme(text =element_text(size = 15)) & geom_hline(yintercept = 0.25, col = 'red', linetype = "dashed") 
+# Extract stemness marker values for cells belonging to P2
+setwd("/g/korbel/Costea/Computational/VASAseq_data/TAL1_TALL/All_samples/")
+p2_cells <- rownames(obj.subgroups@meta.data)[obj.subgroups@meta.data$Patients == "P2"]
+stemness_values <- obj.subgroups@meta.data[p2_cells, "stemness_marker1", drop = FALSE]
+# Ensure total.P2 contains the same cells
+matching_cells <- intersect(rownames(total.P2@meta.data), rownames(stemness_values))
+# Transfer the values
+total.P2@meta.data[matching_cells, "stemness_marker1"] <- stemness_values[matching_cells, , drop = FALSE]
+#generate plots
+png('../../../../Manuscript/figures/images/Fig3/Stemness_P2_vlnplot.png',width=3500,height=2500,res=600)
+VlnPlot(total.P2, features= "stemness_marker1", group.by="seurat_clusters", pt.size = 0, cols = c("0" = "#E69F00", "1" = "#009E73", "2" = "#56B4E9")) + NoLegend() + ggtitle("Stemness Score")  + theme(plot.title = element_text(hjust = 0.5, face="bold")) +xlab("Cluster") + theme(text =element_text(size = 15)) & geom_hline(yintercept = 0.25, col = 'red', linetype = "dashed") 
 dev.off()
-png('../../../../../../Manuscript/figures/images/Fig3/UMAP_P2.png',width=3500,height=2500,res=600)
+png('../../../../Manuscript/figures/images/Fig3/UMAP_P2.png',width=3500,height=2500,res=600)
 DimPlot(total.P2, reduction = "umap", cols = c("0" = "#E69F00", "1" = "#009E73", "2" = "#56B4E9")) + ggtitle ("Cluster") + theme(plot.title = element_text(hjust = 0.5, face="bold"))  + theme(text =element_text(size = 15)) 
 dev.off()
-png('../../../../../../Manuscript/figures/images/Fig3/barplot_P2.png',width=3500,height=2500,res=600)
+png('../../../../Manuscript/figures/images/Fig3/barplot_P2.png',width=3500,height=2500,res=600)
 dittoBarPlot(total.P2, "seurat_clusters", group.by = "Patient", color.panel = c("#E69F00", "#009E73","#56B4E9" )) + ylab("Cluster Frequency")+ xlab("Disease Stage") + ggtitle("") + theme(plot.title = element_text(hjust = 0.5, face="bold")) +  theme(text =element_text(size = 15)) + NoLegend()   
 dev.off()
 #P12
-total.P12 <- AddModuleScore(total.P12, features = list(stemness.marker), name = "stemness_marker")
-png('../../../../../../Manuscript/figures/images/Fig3/Stemness_P12_vlnplot.png',width=3500,height=2500,res=600)
+# Extract stemness marker values for cells belonging to P12
+setwd("/g/korbel/Costea/Computational/VASAseq_data/TAL1_TALL/All_samples/")
+p12_cells <- rownames(obj.subgroups@meta.data)[obj.subgroups@meta.data$Patients == "P12"]
+stemness_values <- obj.subgroups@meta.data[p12_cells, "stemness_marker1", drop = FALSE]
+# Ensure total.P12 contains the same cells
+matching_cells <- intersect(rownames(total.P12@meta.data), rownames(stemness_values))
+# Transfer the values
+total.P12@meta.data[matching_cells, "stemness_marker1"] <- stemness_values[matching_cells, , drop = FALSE]
+#generate plots
+png('../../../../Manuscript/figures/images/Fig3/Stemness_P12_vlnplot.png',width=3500,height=2500,res=600)
 VlnPlot(total.P12, features= "stemness_marker1", group.by="seurat_clusters", pt.size = 0, cols = c("0" = "#E69F00", "1" = "#009E73", "2" = "#56B4E9", "3" = "#F0E442")) + NoLegend() + ggtitle("Stemness Score") + theme(plot.title = element_text(hjust = 0.5, face="bold")) +xlab("Cluster") + theme(text =element_text(size = 15)) & geom_hline(yintercept = 0.25, col = 'red', linetype = "dashed") 
 dev.off()
-png('../../../../../../Manuscript/figures/images/Fig3/UMAP_P12.png',width=3500,height=2500,res=600)
+png('../../../../Manuscript/figures/images/Fig3/UMAP_P12.png',width=3500,height=2500,res=600)
 DimPlot(total.P12, reduction = "umap", cols = c("0" = "#E69F00", "1" = "#009E73", "2" = "#56B4E9", "3" = "#F0E442")) + ggtitle ("Cluster") + theme(plot.title = element_text(hjust = 0.5, face="bold")) + theme(text =element_text(size = 15)) 
 dev.off()
-png('../../../../../../Manuscript/figures/images/Fig3/barplot_P12.png',width=3500,height=2500,res=600)
+png('../../../../Manuscript/figures/images/Fig3/barplot_P12.png',width=3500,height=2500,res=600)
 dittoBarPlot(total.P12, "seurat_clusters", group.by = "Patient", color.panel = c("#E69F00", "#009E73","#56B4E9","#F0E442" )) + ylab("Cluster Frequency")+ xlab("Disease Stage") + ggtitle("") + theme(plot.title = element_text(hjust = 0.5, face="bold")) +  theme(text =element_text(size = 15)) + NoLegend() 
 dev.off()
 #P7
-total.P7 <- AddModuleScore(total.P7, features = list(stemness.marker), name = "stemness_marker")
-png('../../../../../../Manuscript/figures/images/Fig3/Stemness_P7_vlnplot.png',width=3500,height=2500,res=600)
+# Extract stemness marker values for cells belonging to P7
+setwd("/g/korbel/Costea/Computational/VASAseq_data/TAL1_TALL/All_samples/")
+p7_cells <- rownames(obj.subgroups@meta.data)[obj.subgroups@meta.data$Patients == "P7"]
+stemness_values <- obj.subgroups@meta.data[p7_cells, "stemness_marker1", drop = FALSE]
+# Ensure total.P12 contains the same cells
+matching_cells <- intersect(rownames(total.P7@meta.data), rownames(stemness_values))
+# Transfer the values
+total.P7@meta.data[matching_cells, "stemness_marker1"] <- stemness_values[matching_cells, , drop = FALSE]
+#generate plots
+png('../../../../Manuscript/figures/images/Fig3/Stemness_P7_vlnplot.png',width=3500,height=2500,res=600)
 VlnPlot(total.P7, features= "stemness_marker1", group.by="seurat_clusters", pt.size = 0, cols = c("0" = "#E69F00", "1" = "#56B4E9", "2" =  "#009E73", "3" = "#F0E442", "4" = "#D55E00", "5" ="#CC79A7", "6" ="#0072B2", "7" = "#666666", "8" = "#AD7700")) + NoLegend() + ggtitle("Stemness Score") + theme(plot.title = element_text(hjust = 0.5, face="bold")) +xlab("Cluster") + theme(text =element_text(size = 15)) & geom_hline(yintercept = 0.25, col = 'red', linetype = "dashed") 
 dev.off()
-png('../../../../../../Manuscript/figures/images/Fig3/UMAP_P7.png',width=3500,height=2500,res=600)
+png('../../../../Manuscript/figures/images/Fig3/UMAP_P7.png',width=3500,height=2500,res=600)
 DimPlot(total.P7, reduction = "umap", cols = c("0" = "#E69F00", "1" = "#56B4E9", "2" =  "#009E73", "3" = "#F0E442", "4" = "#D55E00", "5" ="#CC79A7", "6" ="#0072B2", "7" = "#666666", "8" = "#AD7700")) + ggtitle ("Cluster") + theme(plot.title = element_text(hjust = 0.5, face="bold")) + theme(text =element_text(size = 15)) 
 dev.off()
-png('../../../../../../Manuscript/figures/images/Fig3/barplot_P7.png',width=3500,height=2500,res=600)
+png('../../../../Manuscript/figures/images/Fig3/barplot_P7.png',width=3500,height=2500,res=600)
 dittoBarPlot(total.P7, "seurat_clusters", group.by = "Patient", color.panel = c("#E69F00","#56B4E9", "#009E73","#F0E442", "#D55E00","#CC79A7", "#0072B2", "#666666", "#AD7700" )) + ylab("Cluster Frequency")+ xlab("Disease Stage") + ggtitle("") + theme(plot.title = element_text(hjust = 0.5, face="bold")) +  theme(text =element_text(size = 15)) + NoLegend() 
 dev.off()
 
