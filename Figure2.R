@@ -7,6 +7,7 @@ library(tidyverse)
 library(ggplot2)
 library(ComplexHeatmap)
 library(pals)
+library(EnhancedVolcano)
 
 
 setwd("/g/korbel/Costea/Computational/VASAseq_data/TAL1_TALL/All_samples/")
@@ -330,7 +331,7 @@ DimPlot(obj, reduction = "umap", group.by = "Phase", cols = c("G1" =  "#D99BBD",
 dev.off()
 
 png('../../../../../../Manuscript/figures/images/Fig2/cell_cycle_barplot.png',width=3500,height=2500,res=600)
-dittoBarPlot(obj, "Phase",group.by = "Cell_State", color.panel = c("#D99BBD","#D5C711","#A3A3A3") ) + ggtitle("") + theme(plot.title = element_text(hjust = 0.5, face="bold"))  + theme(text =element_text(size = 15)) + NoLegend() + xlab("Cell State")
+dittoBarPlot(obj, "Phase",group.by = "Cell_State", color.panel = c("#D99BBD","#D5C711","#A3A3A3") ) + ggtitle("") + theme(plot.title = element_text(hjust = 0.5, face="bold"))  + theme(text =element_text(size = 15)) + NoLegend() + xlab("Cell State") + ylab("Cell Frequency")
 dev.off()
 
 ##Fig 2f: GSEA see python script
@@ -342,12 +343,12 @@ anchor <- FindTransferAnchors(reference = thymus, query = obj,
                               dims = 1:30, reference.reduction = "pca")
 obj <- MapQuery(anchorset = anchor, reference = thymus, query = obj,
                 refdata = list(celltype = "Anno_level_fig1"), reference.reduction = "pca", reduction.model = "umap")
-png('../../../../../../Manuscript/figures/images/Fig1/cell_type_umap.png',width=3500,height=2500,res=600)
-DimPlot(obj, group.by = "predicted.celltype", reduction = "umap", cols = c("B_naive" = "#F0E442", "CD4+Tmem" = "#56B4E9", "CD8+T" = "#009E73", "CD8+Tmem" = "#1C91D4", "CD8αα" = "#0072B2", "DN" = "#D55E00", "DP" = "#E69F00"  , "ILC3" = "#666666", "NK" = "#AD7700", "TEC(myo)" = "#007756", "TEC(neuro)" = "#CC79A7", "Treg" =  "#D5C711", "αβT(entry)" ="#005685")) + ggtitle("Predicted Celltype") + theme(plot.title = element_text(hjust = 0.5, face="bold"))  + theme(text =element_text(size = 15))  
+png('../../../../../../Manuscript/figures/images/Fig1/cell_type_umap.png',width=4500,height=2500,res=600)
+DimPlot(obj, group.by = "predicted.celltype", reduction = "umap", cols = c("B_naive" = "#F0E442", "CD4+Tmem" = "#56B4E9", "CD8+T" = "#009E73", "CD8+Tmem" = "#1C91D4", "CD8αα" = "#0072B2", "DN" = "#D55E00", "DP" = "#E69F00"  , "ILC3" = "#666666", "NK" = "#AD7700", "TEC(myo)" = "#007756", "TEC(neuro)" = "#CC79A7", "Treg" =  "#D5C711", "αβT(entry)" ="#005685")) + ggtitle("Predicted Celltype using Thymus Reference") + theme(plot.title = element_text(hjust = 0.5, face="bold"))  + theme(text =element_text(size = 15))  
 dev.off()
 
 png('../../../../../../Manuscript/figures/images/Fig1/cell_type_barplot.png',width=3500,height=2500,res=600)
-dittoBarPlot(obj, "predicted.celltype", group.by = "Cell_State", color.panel = c("#F0E442","#56B4E9", "#009E73",  "#1C91D4", "#0072B2", "#D55E00",  "#E69F00"  ,  "#666666",  "#AD7700",  "#007756",  "#CC79A7",  "#D5C711", "#005685"))  + theme(plot.title = element_text(hjust = 0.5, face="bold"))  + theme(text =element_text(size = 15)) + ggtitle("") + NoLegend() + xlab("Cell State")
+dittoBarPlot(obj, "predicted.celltype", group.by = "Cell_State", color.panel = c("#F0E442","#56B4E9", "#009E73",  "#1C91D4", "#0072B2", "#D55E00",  "#E69F00"  ,  "#666666",  "#AD7700",  "#007756",  "#CC79A7",  "#D5C711", "#005685"))  + theme(plot.title = element_text(hjust = 0.5, face="bold"))  + theme(text =element_text(size = 15)) + ggtitle("") + NoLegend() + xlab("Cell State") + ylab("Cell Frequency")
 dev.off()
 
 saveRDS(obj, "/g/korbel/Costea/Computational/SCENIC/2023July_TALL_Julia/total.scenic.reduction.rds")
@@ -361,9 +362,9 @@ write.xlsx(marker, row.names = TRUE, "/g/korbel/Costea/Manuscript/Nature Communi
 
 stemness.marker.volcano <- FindMarkers(obj, ident.1 = "Stem_like", only.pos = FALSE, min.pct = 0.25, logfc.threshold = 0) #logfc threshold is set to 0 to get all data for volcano plotting in first place (for better visualization). in the plot threshold is set again to 0.5
 
-png('../../../../../../Manuscript/figures/images/Fig3/volcanoplot_DE_TAL1.png',width=5500,height=3500,res=600)
+png('../../../Manuscript/figures/images/Fig3/volcanoplot_DE_TAL1.png',width=5500,height=3500,res=600)
 EnhancedVolcano(stemness.marker.volcano, rownames(stemness.marker.volcano), title = "RNA Markers of Stem-like Population", subtitle = "Differential Expression: Blasts vs Stem-like Cells", titleLabSize = 23, subtitleLabSize = 17,
-                selectLab = c("CD44", "ADGRE5", "CD27", "COL6A2", "AHNAK", "ITGB7", "BCL2", "BCL6", "MCL1", "NOTCH1"), boxedLabels = TRUE, legendPosition = "right",
+                selectLab = c("CD44", "ADGRE5", "CD27", "COL6A2", "AHNAK", "ITGB7", "BCL2", "BCL6", "MCL1","BCL2L1", "NOTCH1"), boxedLabels = TRUE, legendPosition = "right",
                 x ="avg_log2FC", col=c('grey', 'grey', 'grey', "red"), legendLabels = c("NS", "NS", "NS", "P-value (adj) and log2FC"),
                 y ="p_val_adj", pCutoff = 0.05, FCcutoff = 0.5, pointSize = 2, labSize = 5, max.overlaps = Inf, drawConnectors = TRUE, ylab = "-Log10 P(adjusted)")
 dev.off()
@@ -372,6 +373,8 @@ dev.off()
 ## Fig 2j
 # SCENIC output-target genes are assigned to each TF
 #Note: This is what we use for network re-construction
+
+setwd("/g/korbel/Costea/Computational/SCENIC/2023July_TALL_Julia/")
 
 reg_files <- list.files("SCENIC_run2/output/regulon", 
                         pattern = ".*\\(\\+\\)\\.tsv$", 

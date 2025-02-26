@@ -5,6 +5,10 @@ library(dplyr)
 library(Seurat)
 library(dittoSeq)
 library(ggplot2)
+library(dplyr)
+library(tidyverse)
+library(ComplexHeatmap)
+library(pals)
 
 setwd("/g/korbel/Costea/Computational/VASAseq_data/TAL1_TALL/All_samples/")
 
@@ -146,7 +150,7 @@ dev.off()
 
 ##Fig 1g: Barplot of predicted cell cycle phase based on cell cycle score
 png('../../../../../../Manuscript/figures/images/Fig1/cell_cycle_barplot_P2.png',width=3500,height=2500,res=600)
-dittoBarPlot(total.P2, "Phase",group.by = "seurat_clusters", color.panel = c("#D99BBD","#D5C711","#A3A3A3") ) + ggtitle("") + theme(plot.title = element_text(hjust = 0.5, face="bold"))  + theme(text =element_text(size = 15)) + NoLegend() + xlab("Seurat Clusters")
+dittoBarPlot(total.P2, "Phase",group.by = "seurat_clusters", color.panel = c("#D99BBD","#D5C711","#A3A3A3") ) + ggtitle("") + theme(plot.title = element_text(hjust = 0.5, face="bold"))  + theme(text =element_text(size = 15)) + NoLegend() + xlab("Seurat Clusters") + ylab("Cell Frequency")
 dev.off()
 
 ##Fig 1h: Cell type classification based on thymic single cell reference atlas (Jong-Eun Park et al, Science 2020)
@@ -174,18 +178,19 @@ anchor <- FindTransferAnchors(reference = thymus, query = total.P2,
 total.P2 <- MapQuery(anchorset = anchor, reference = thymus, query = total.P2,
                      refdata = list(celltype = "Anno_level_fig1"), reference.reduction = "pca", reduction.model = "umap")
 png('../../../../../../Manuscript/figures/images/Fig1/cell_type_umap_P2.png',width=3500,height=2500,res=600)
-DimPlot(total.P2, group.by = "predicted.celltype", reduction = "umap", cols = c("DN" = "#D55E00", "DP" = "#E69F00")) + ggtitle("Predicted Celltype") + theme(plot.title = element_text(hjust = 0.5, face="bold"))  + theme(text =element_text(size = 15))  
+DimPlot(total.P2, group.by = "predicted.celltype", reduction = "umap", cols = c("DN" = "#D55E00", "DP" = "#E69F00")) + ggtitle("Predicted Celltype using Thymus Reference") + theme(plot.title = element_text(hjust = 0.5, face="bold"))  + theme(text =element_text(size = 15))  
 dev.off()
 
 ##Fig 1i: barplot of cell type classification in patient P2
 png('../../../../../../Manuscript/figures/images/Fig1/cell_type_barplot_P2.png',width=3500,height=2500,res=600)
-dittoBarPlot(total.P2, "predicted.celltype", group.by = "seurat_clusters", color.panel = c( "#D55E00",  "#E69F00" ))  + theme(plot.title = element_text(hjust = 0.5, face="bold"))  + theme(text =element_text(size = 15)) + ggtitle("") + NoLegend() + xlab("Seurat Clusters")
+dittoBarPlot(total.P2, "predicted.celltype", group.by = "seurat_clusters", color.panel = c( "#D55E00",  "#E69F00" ))  + theme(plot.title = element_text(hjust = 0.5, face="bold"))  + theme(text =element_text(size = 15)) + ggtitle("") + NoLegend() + xlab("Seurat Clusters") + ylab("Cell Frequency")
 dev.off()
 
 saveRDS(total.P2, "/g/korbel/Costea/Computational/VASAseq_data/TAL1_TALL/All_samples/Analysis/P2_no_integration/total.P2.object.rds")
 
 ##Fig 1j: regulons P2: output of pySCENIC pipeline 
 #Add pySCENIC output to object and save it
+setwd("/g/korbel/Costea/Computational/SCENIC/2023July_TALL_Julia/")
 scenic_df_wide <- read.csv("SCENIC/P2/new_aucell_mtx.tsv", 
                            sep = "\t", 
                            row.names = "Cell")
@@ -194,7 +199,7 @@ colnames(scenic_df_wide) <- colnames(scenic_df_wide) %>% str_replace(pattern = f
 all_TFs <- colnames(scenic_df_wide)
 
 total.P2 <- subset(total.P2,cells = rownames(scenic_df_wide))
-names.use <- rownames(scenic_df_wide)[rownames(scenic_df_wide) %in% colnames(obj)]
+names.use <- rownames(scenic_df_wide)[rownames(scenic_df_wide) %in% colnames(total.P2)]
 scenic_df_wide <- scenic_df_wide[names.use, ]
 total.P2[["scenic"]] <- CreateAssayObject(counts = t(scenic_df_wide))
 #SCENIC output-target genes are assigned to each TF. Note: This is what we use for network re-construction
@@ -227,19 +232,19 @@ for (p in unique(total.P2@meta.data$seurat_clusters)){
 }
 
 pop_de <- list()
-pop_de[[0]] <- unique(unlist(DE_genes[c("0_+", "0_-")]))
-pop_de[[1]] <- unique(unlist(DE_genes[c("1_+", "1_-")]))
-pop_de[[2]] <- unique(unlist(DE_genes[c("2_+", "2_-")]))
+pop_de[["Cluster0"]] <- unique(unlist(DE_genes[c("0_+", "0_-")]))
+pop_de[["Cluster1"]] <- unique(unlist(DE_genes[c("1_+", "1_-")]))
+pop_de[["Cluster2"]] <- unique(unlist(DE_genes[c("2_+", "2_-")]))
 
-intersect(pop_de[[0]], unique(targene_df$target))
+intersect(pop_de[["Cluster0"]], unique(targene_df$target))
 sig_TFs <- list()
 fisher_df1 <- list()
 fisher_df2 <- list()
-for (p in c(0,1, 2)){
+for (p in c("Cluster0", "Cluster1", "Cluster2")){
   tmp_genes <- intersect(pop_de[[p]], unique(targene_df$target)) #Take those that are in the network
   tmp_targene_df <- targene_df[which(targene_df$target %in% tmp_genes), ] #Lets look only at all the DE genes, both conditions
-  pos_genes <- intersect(tmp_genes, DE_genes[[paste0(p, "_+")]]) #cr
-  neg_genes <- intersect(tmp_genes, DE_genes[[paste0(p, "_-")]])
+  pos_genes <- intersect(tmp_genes, DE_genes[[paste0(sub("Cluster", "", p), "_+")]]) #cr
+  neg_genes <- intersect(tmp_genes, DE_genes[[paste0(sub("Cluster", "", p), "_-")]])
   
   count_tfs_genes <- data.frame(TF = unique(tmp_targene_df[which(tmp_targene_df$target %in% tmp_genes), "TF"])) #how many of the condition genes these TFs target
   rownames(count_tfs_genes) <- count_tfs_genes$TF
@@ -269,7 +274,7 @@ for (p in c(0,1, 2)){
   table_tfs$log2OR <- log2(table_tfs$OR)
   table_tfs <- table_tfs[order(table_tfs$log2OR), ]
   levels_plot <- rownames(table_tfs)
- 
+  write_xlsx(table_tfs, path = paste0("/g/korbel/Costea/Manuscript/tables/total.P2_FisherTF_targets_", p, ".xlsx" ))
   #Plot enrichment
   
   q3 <- ggplot(table_tfs, aes(x = factor(TF, levels = levels_plot), y = log2OR, fill = padj)) + 
