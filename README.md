@@ -14,7 +14,11 @@ To create a local conda environment with the required tools just use
 
 `make all`
 
-Alternatively, you can also use the conda environment file.
+This usually takes a few minutes to create the conda environment.
+
+# System requirements
+
+We included a conda environment file, `environment.yml`, that lists all software dependencies.
 
 `conda env create -f environment.yml`
 
@@ -22,9 +26,14 @@ For python packages, we also included a `requirements.txt` file.
 
 `pip install -r requirements.txt`
 
+# Further workflows
+
+The single-cell alternative splicing analysis pipeline is part of a separate repository [AS_VASAseq_sc_pipeline](https://github.com/Zaffe24/AS_VASAseq_sc_pipeline).
+
 # Sequencing data
 
 The raw sequencing data can be accessed here: https://ega-archive.org/studies/EGAS50000000582
+
 
 
 
