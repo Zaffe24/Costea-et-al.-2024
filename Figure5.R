@@ -1018,12 +1018,93 @@ my_data <- data.frame(
   Stem_like_Cluster = c( Initial, Relapse)
 )
 
-comparing_groups <- list(c("Initial", "Relapse") ) 
-p <- ggpaired(my_data, x = "Disease_Stage", y = "Stem_like_Cluster", add = "dotplot", color = "Disease_Stage", palette =c("#56B4E9", "#56B4E9"), ylab = "Cluster Size in %", xlab = "Disease Stage")  
-png('../../../../../../Manuscript/figures/images/Fig3/stem_like_cluster_barplot.png',width=4000,height=2500,res=600)
-p + stat_compare_means(comparisons = comparing_groups, label.y = 35, method = "t.test", paired = TRUE, label = "p.format") + theme(plot.title = element_text(hjust = 0.5, face="bold")) + theme(text =element_text(size = 15)) + NoLegend() + ggtitle("Stem-like Cluster in Relapsing Patients")
+comparing_groups <- list(c("Initial", "Relapse")) 
+png('../../../Manuscript/figures/images/Fig3/stem_like_cluster_barplot.png',width=4000,height=2500,res=600)
+# Create Paired Boxplot (Instead of ggpaired)
+p <- ggplot(my_data, aes(x = Disease_Stage, y = Stem_like_Cluster, fill = Disease_Stage)) +
+  geom_boxplot(
+    outlier.shape = 16, 
+    outlier.size = 3, 
+    outlier.color = "black", 
+    width = 0.5
+  ) +
+  stat_boxplot(geom = "errorbar", width = 0.2, color = "black") +  # Adding explicit error bars
+  geom_point(color = "black", position = position_jitter(width = 0.1), size = 3) +  # Dots are all black
+  geom_line(aes(group = rep(1:8, 2)), color = "black") +   # Connect paired values
+  stat_compare_means(comparisons = comparing_groups, 
+                     method = "t.test", 
+                     paired = TRUE, 
+                     label = "p.signif",  # Shows **stars** instead of raw p-values
+                     label.y = 45) + 
+  xlab("Disease Stage") +
+  ylab("Cluster Size in %") +
+  scale_fill_manual(values = c("Initial" = "#56B4E9", "Relapse" = "#56B4E9")) +  # Box colors for Disease Stage
+  theme_minimal() +
+  ggtitle("Stem-like Cluster in Relapsing Patients") +
+  theme(
+    plot.title = element_text(hjust = 0.5, face="bold"),
+    text = element_text(size = 15),
+    panel.border = element_blank(),
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    axis.line = element_line(colour = "black"),
+    axis.title.x = element_text(size = 20, color = "black"),
+    axis.title.y = element_text(size = 20, color = "black"),
+    axis.text.x = element_text(size = 18, color = "black"),
+    axis.text.y = element_text(size = 18, color = "black")
+  ) +
+  NoLegend()
+p
 dev.off()
 #pval: 6.6e-05
+
+
+library(ggpubr)
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+
+library(ggpubr)
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+
+# Data
+Initial <- c(0, 0.46, 0.80, 2.16, 0.57, 1.38, 0, 1.71)
+Relapse <- c(10.68, 29.37, 23.3, 29.39, 30.02, 26.47, 43.52, 29.6)
+
+# Create a dataframe with paired observations
+my_data <- data.frame(
+  Patient_ID = factor(1:8),  # Assign patient IDs for pairing
+  Initial = Initial,
+  Relapse = Relapse
+) %>%
+  pivot_longer(cols = c(Initial, Relapse), names_to = "Disease_Stage", values_to = "Stem_like_Cluster")
+
+# Define group comparison for stats
+comparing_groups <- list(c("Initial", "Relapse"))
+
+# Paired boxplot with error bars (mean ± SE)
+p <- ggplot(my_data, aes(x = Disease_Stage, y = Stem_like_Cluster, fill = Disease_Stage)) +
+  geom_boxplot(outlier.shape = 16, outlier.size = 3, alpha = 0.5) +  # Show outliers
+  geom_point(position = position_dodge(width = 0.4), size = 3, alpha = 0.8) +  # Ensure dots stay aligned
+  geom_line(aes(group = Patient_ID), color = "black", size = 0.5) +  # Thin black paired lines
+  stat_boxplot(geom = "errorbar", width = 0.2, color = "black") +  # Add error bars (Mean ± SE)
+  scale_fill_manual(values = c("#56B4E9", "#56B4E9")) +
+  ylab("Cluster Size in %") +
+  xlab("Disease Stage") +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold"),
+        text = element_text(size = 15)) +
+  ggtitle("Stem-like Cluster in Relapsing Patients") +
+  NoLegend() +
+  stat_compare_means(comparisons = comparing_groups, label.y = 45, method = "t.test", paired = TRUE, label = "p.signif")  # Paired t-test
+
+# Save the figure
+png('../../../Manuscript/figures/images/Fig3/stem_like_cluster_paired_boxplot.png', width = 4000, height = 2500, res = 600)
+print(p)
+dev.off()
+
 
 
 

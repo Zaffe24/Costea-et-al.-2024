@@ -111,16 +111,39 @@ metrics.auc(pred_x, pred_y)
 Initial <- c(3.5385306122449, 6.67485714285714, 3.77477551020408, 4.33983673469388, 5.81159183673469, 5.48440816326531, 5.3214693877551) 
 Relapse <- c(3.58530612244898, 6.73697959183673, 4.39738775510204, 7.53681632653061, 6.74310204081632, 6.68383673469388, 6.35910204081633)
 
-my_data <- data.frame( 
-  Disease_Stage = rep(c("Initial", "Relapse"), each = 7),
-  logAUC = c( Initial, Relapse)
-)
+# Create a dataframe with paired observations
+my_data <- data.frame(
+  Patient_ID = factor(1:7),  # Assign patient IDs for pairing
+  Initial = Initial,
+  Relapse = Relapse
+) %>%
+  pivot_longer(cols = c(Initial, Relapse), names_to = "Disease_Stage", values_to = "logAUC")
 
-comparing_groups <- list(c("Initial", "Relapse") ) 
-p <- ggpaired(my_data, x = "Disease_Stage", y = "logAUC", add = "dotplot", color = "Disease_Stage", palette =c("#56B4E9", "#56B4E9"), ylab = "logAUC", xlab = "Disease Stage")  
-png('/g/korbel/Costea/Manuscript/figures/images/Fig6/DRP_Cytarabine_barplot.png',width=4000,height=2500,res=600)
-p + stat_compare_means(comparisons = comparing_groups, label.y = 8, method = "t.test", paired = TRUE, label = "p.format") + theme(plot.title = element_text(hjust = 0.5, face="bold")) + theme(text =element_text(size = 15)) + NoLegend() + ggtitle("Cytarabine")
+# Define group comparison for stats
+comparing_groups <- list(c("Initial", "Relapse"))
+
+# Paired boxplot with error bars (mean ± SE)
+p <- ggplot(my_data, aes(x = Disease_Stage, y = logAUC, fill = Disease_Stage)) +
+  geom_boxplot(outlier.shape = 16, outlier.size = 3, alpha = 0.5) +  # Show outliers
+  geom_point(position = position_dodge(width = 0.4), size = 3, alpha = 0.8) +  # Ensure dots stay aligned
+  geom_line(aes(group = Patient_ID), color = "black", size = 0.5) +  # Thin black paired lines
+  stat_boxplot(geom = "errorbar", width = 0.2, color = "black") +  # Add error bars (Mean ± SE)
+  scale_fill_manual(values = c("#56B4E9", "#56B4E9")) +
+  ylab("logAUC") +
+  xlab("Disease Stage") +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold"),
+        text = element_text(size = 15)) +
+  ggtitle("Cytarabine") +
+  NoLegend() +
+  stat_compare_means(comparisons = comparing_groups, label.y = 8, method = "t.test", paired = TRUE, label = "p.signif")  # Paired t-test
+
+# Save the figure
+png('../../Manuscript/figures/images/Fig6/DRP_cytarabine_barplot.png', width = 4000, height = 2500, res = 600)
+print(p)
 dev.off()
+
+
 ```
 
 
@@ -129,15 +152,35 @@ dev.off()
 Initial <- c(6.05061224489796, 8.0, 7.76808163265306, 6.22881632653061, 8.0, 5.58775510204082)
 Relapse <- c(6.58432653061224, 7.768, 7.62130612244898, 6.10857142857143, 7.55102040816326, 4.34922448979592)
 
-my_data <- data.frame( 
-  Disease_Stage = rep(c("Initial", "Relapse"), each = 6),
-  logAUC = c( Initial, Relapse)
-)
+# Create a dataframe with paired observations
+my_data <- data.frame(
+  Patient_ID = factor(1:6),  # Assign patient IDs for pairing
+  Initial = Initial,
+  Relapse = Relapse
+) %>%
+  pivot_longer(cols = c(Initial, Relapse), names_to = "Disease_Stage", values_to = "logAUC")
 
-comparing_groups <- list(c("Initial", "Relapse") ) 
-p <- ggpaired(my_data, x = "Disease_Stage", y = "logAUC", add = "dotplot", color = "Disease_Stage", palette =c("#56B4E9", "#56B4E9"), ylab = "logAUC", xlab = "Disease Stage")  
-png('/g/korbel/Costea/Manuscript/figures/images/Fig6/DRP_FX1_barplot.png',width=4000,height=2500,res=600)
-p + stat_compare_means(comparisons = comparing_groups, label.y = 8, method = "t.test", paired = TRUE, label = "p.signif") + theme(plot.title = element_text(hjust = 0.5, face="bold")) + theme(text =element_text(size = 15)) + NoLegend() + ggtitle("FX1")
+# Define group comparison for stats
+comparing_groups <- list(c("Initial", "Relapse"))
+
+# Paired boxplot with error bars (mean ± SE)
+p <- ggplot(my_data, aes(x = Disease_Stage, y = logAUC, fill = Disease_Stage)) +
+  geom_boxplot(outlier.shape = 16, outlier.size = 3, alpha = 0.5) +  # Show outliers
+  geom_point(position = position_dodge(width = 0.4), size = 3, alpha = 0.8) +  # Ensure dots stay aligned
+  geom_line(aes(group = Patient_ID), color = "black", size = 0.5) +  # Thin black paired lines
+  stat_boxplot(geom = "errorbar", width = 0.2, color = "black") +  # Add error bars (Mean ± SE)
+  scale_fill_manual(values = c("#56B4E9", "#56B4E9")) +
+  ylab("logAUC") +
+  xlab("Disease Stage") +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold"),
+        text = element_text(size = 15)) +
+  ggtitle("FX1") +
+  NoLegend() +
+  stat_compare_means(comparisons = comparing_groups, label.y = 8, method = "t.test", paired = TRUE, label = "p.signif")  # Paired t-test
+  # Save the figure
+png('../../Manuscript/figures/images/Fig6/DRP_FX1_barplot.png', width = 4000, height = 2500, res = 600)
+print(p)
 dev.off()
 ```
 
@@ -147,33 +190,73 @@ dev.off()
 Initial <- c(3.71771428571428, 5.31461224489796, 5.41028571428571, 4.91012244897959, 5.78514285714286, 4.91616326530612)
 Relapse <- c(4.96873469387755, 5.35461224489796, 6.04016326530612, 5.09485714285714, 5.96171428571428, 1.61444897959184)
 
-my_data <- data.frame( 
-  Disease_Stage = rep(c("Initial", "Relapse"), each = 6),
-  logAUC = c( Initial, Relapse)
-)
+# Create a dataframe with paired observations
+my_data <- data.frame(
+  Patient_ID = factor(1:6),  # Assign patient IDs for pairing
+  Initial = Initial,
+  Relapse = Relapse
+) %>%
+  pivot_longer(cols = c(Initial, Relapse), names_to = "Disease_Stage", values_to = "logAUC")
 
-comparing_groups <- list(c("Initial", "Relapse") ) 
-p <- ggpaired(my_data, x = "Disease_Stage", y = "logAUC", add = "dotplot", color = "Disease_Stage", palette =c("#56B4E9", "#56B4E9"), ylab = "logAUC", xlab = "Disease Stage")  
-png('/g/korbel/Costea/Manuscript/figures/images/Fig6/DRP_Venetoclax_barplot.png',width=4000,height=2500,res=600)
-p + stat_compare_means(comparisons = comparing_groups, label.y = 8, method = "t.test", paired = TRUE, label = "p.signif") + theme(plot.title = element_text(hjust = 0.5, face="bold")) + theme(text =element_text(size = 15)) + NoLegend() + ggtitle("Venetoclax")
+# Define group comparison for stats
+comparing_groups <- list(c("Initial", "Relapse"))
+
+# Paired boxplot with error bars (mean ± SE)
+p <- ggplot(my_data, aes(x = Disease_Stage, y = logAUC, fill = Disease_Stage)) +
+  geom_boxplot(outlier.shape = 16, outlier.size = 3, alpha = 0.5) +  # Show outliers
+  geom_point(position = position_dodge(width = 0.4), size = 3, alpha = 0.8) +  # Ensure dots stay aligned
+  geom_line(aes(group = Patient_ID), color = "black", size = 0.5) +  # Thin black paired lines
+  stat_boxplot(geom = "errorbar", width = 0.2, color = "black") +  # Add error bars (Mean ± SE)
+  scale_fill_manual(values = c("#56B4E9", "#56B4E9")) +
+  ylab("logAUC") +
+  xlab("Disease Stage") +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold"),
+        text = element_text(size = 15)) +
+  ggtitle("Venetoclax") +
+  NoLegend() +
+  stat_compare_means(comparisons = comparing_groups, label.y = 8, method = "t.test", paired = TRUE, label = "p.signif")  # Paired t-test
+  # Save the figure
+png('../../Manuscript/figures/images/Fig6/DRP_venetoclax_barplot.png', width = 4000, height = 2500, res = 600)
+print(p)
 dev.off()
 ```
 
 
 ```{r} 
-#Suppl Fig6d: Plot S-6345 Initial vs Relapse (logAUC)
+#Suppl Fig6d: Plot S-63845 Initial vs Relapse (logAUC)
 Initial <- c(3.78897959183673, 4.51967346938775, 3.76367346938775, 4.23959183673469, 4.91020408163265, 4.06506122448979)
 Relapse <- c(4.49248979591837, 5.10130612244898, 4.88179591836735, 5.2044081632653, 5.39648979591837, 3.47265306122449)
 
-my_data <- data.frame( 
-  Disease_Stage = rep(c("Initial", "Relapse"), each = 6),
-  logAUC = c( Initial, Relapse)
-)
+# Create a dataframe with paired observations
+my_data <- data.frame(
+  Patient_ID = factor(1:6),  # Assign patient IDs for pairing
+  Initial = Initial,
+  Relapse = Relapse
+) %>%
+  pivot_longer(cols = c(Initial, Relapse), names_to = "Disease_Stage", values_to = "logAUC")
 
-comparing_groups <- list(c("Initial", "Relapse") ) 
-p <- ggpaired(my_data, x = "Disease_Stage", y = "logAUC", add = "dotplot", color = "Disease_Stage", palette =c("#56B4E9", "#56B4E9"), ylab = "logAUC", xlab = "Disease Stage")  
-png('/g/korbel/Costea/Manuscript/figures/images/Fig6/DRP_S-63845_barplot.png',width=4000,height=2500,res=600)
-p + stat_compare_means(comparisons = comparing_groups, label.y = 8, method = "t.test", paired = TRUE, label = "p.signif") + theme(plot.title = element_text(hjust = 0.5, face="bold")) + theme(text =element_text(size = 15)) + NoLegend() + ggtitle("S-63845")
+# Define group comparison for stats
+comparing_groups <- list(c("Initial", "Relapse"))
+
+# Paired boxplot with error bars (mean ± SE)
+p <- ggplot(my_data, aes(x = Disease_Stage, y = logAUC, fill = Disease_Stage)) +
+  geom_boxplot(outlier.shape = 16, outlier.size = 3, alpha = 0.5) +  # Show outliers
+  geom_point(position = position_dodge(width = 0.4), size = 3, alpha = 0.8) +  # Ensure dots stay aligned
+  geom_line(aes(group = Patient_ID), color = "black", size = 0.5) +  # Thin black paired lines
+  stat_boxplot(geom = "errorbar", width = 0.2, color = "black") +  # Add error bars (Mean ± SE)
+  scale_fill_manual(values = c("#56B4E9", "#56B4E9")) +
+  ylab("logAUC") +
+  xlab("Disease Stage") +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold"),
+        text = element_text(size = 15)) +
+  ggtitle("S-63845") +
+  NoLegend() +
+  stat_compare_means(comparisons = comparing_groups, label.y = 8, method = "t.test", paired = TRUE, label = "p.signif")  # Paired t-test
+  # Save the figure
+png('../../Manuscript/figures/images/Fig6/DRP_S63845_barplot.png', width = 4000, height = 2500, res = 600)
+print(p)
 dev.off()
 ```
 
@@ -182,15 +265,35 @@ dev.off()
 Initial <- c(3.45, 2.30, 2.13, 4.23, 1.89, 5.75)
 Relapse <- c(4.54, 3.82, 2.55, 2.48, 7.04, 4.71)
 
-my_data <- data.frame( 
-  Disease_Stage = rep(c("Initial", "Relapse"), each = 6),
-  logAUC = c( Initial, Relapse)
-)
+# Create a dataframe with paired observations
+my_data <- data.frame(
+  Patient_ID = factor(1:6),  # Assign patient IDs for pairing
+  Initial = Initial,
+  Relapse = Relapse
+) %>%
+  pivot_longer(cols = c(Initial, Relapse), names_to = "Disease_Stage", values_to = "logAUC")
 
-comparing_groups <- list(c("Initial", "Relapse") ) 
-p <- ggpaired(my_data, x = "Disease_Stage", y = "logAUC", add = "dotplot", color = "Disease_Stage", palette =c("#56B4E9", "#56B4E9"), ylab = "logAUC", xlab = "Disease Stage")  
-png('/g/korbel/Costea/Manuscript/figures/images/Fig6/DRP_A1331852_barplot.png',width=4000,height=2500,res=600)
-p + stat_compare_means(comparisons = comparing_groups, label.y = 8, method = "t.test", paired = TRUE, label = "p.signif") + theme(plot.title = element_text(hjust = 0.5, face="bold")) + theme(text =element_text(size = 15)) + NoLegend() + ggtitle("A1331852")
+# Define group comparison for stats
+comparing_groups <- list(c("Initial", "Relapse"))
+
+# Paired boxplot with error bars (mean ± SE)
+p <- ggplot(my_data, aes(x = Disease_Stage, y = logAUC, fill = Disease_Stage)) +
+  geom_boxplot(outlier.shape = 16, outlier.size = 3, alpha = 0.5) +  # Show outliers
+  geom_point(position = position_dodge(width = 0.4), size = 3, alpha = 0.8) +  # Ensure dots stay aligned
+  geom_line(aes(group = Patient_ID), color = "black", size = 0.5) +  # Thin black paired lines
+  stat_boxplot(geom = "errorbar", width = 0.2, color = "black") +  # Add error bars (Mean ± SE)
+  scale_fill_manual(values = c("#56B4E9", "#56B4E9")) +
+  ylab("logAUC") +
+  xlab("Disease Stage") +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold"),
+        text = element_text(size = 15)) +
+  ggtitle("A1331852") +
+  NoLegend() +
+  stat_compare_means(comparisons = comparing_groups, label.y = 8, method = "t.test", paired = TRUE, label = "p.signif")  # Paired t-test
+  # Save the figure
+png('../../Manuscript/figures/images/Fig6/DRP_A1331852_barplot.png', width = 4000, height = 2500, res = 600)
+print(p)
 dev.off()
 ```
 

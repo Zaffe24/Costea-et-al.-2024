@@ -114,16 +114,22 @@ comparisons <- list(c("Control", "Cytarabine"))
 custom_colors <- c("Control" = "#1f77b4", "Cytarabine" = "#ff7f0e")
 # Create the boxplot
 P1relinvitro.stemness <- ggplot(data, aes(x = Group, y = Stemness_Score, fill = Group)) +
-  geom_boxplot(aes(group = Group)) +  # Boxplot grouped by category
+  geom_boxplot(
+    aes(group = Group), 
+    outlier.shape = 16,   # Ensuring outliers are visible
+    outlier.size = 3,     # Adjusting outlier size for clarity
+    outlier.color = "black" # Outliers in black for contrast
+  ) +
+  stat_boxplot(geom = "errorbar", width = 0.2, color = "black") +  # Explicit error bars
   geom_signif(comparisons = comparisons, 
               map_signif_level = TRUE, 
-              step_increase = 0.1,  # Space between brackets
-              tip_length = 0.01,    # Controls bracket length
-              color = "black") +    # Ensure significance annotations are black
+              step_increase = 0.1,  
+              tip_length = 0.01,    
+              color = "black") +    
   xlab("Treatment Group") + 
   ylab("Stemness Score") +
-  scale_fill_manual(values = custom_colors) +  # Custom color scheme
-  theme_minimal() +  # Removes grey background
+  scale_fill_manual(values = custom_colors) +  
+  theme_minimal() +  
   ggtitle("P1-Relapse Stemness in-vitro") +
   theme(
     panel.border = element_blank(), 
@@ -138,9 +144,9 @@ P1relinvitro.stemness <- ggplot(data, aes(x = Group, y = Stemness_Score, fill = 
     axis.text.x = element_text(size = 18 , color = "black"),
     axis.text.y = element_text(size = 18, color = "black")
   ) +
-  NoLegend()  # Remove legend to match the reference plot
+  NoLegend()  # Remove legend for clarity
 
-png('../../../../../Manuscript/figures/images/Fig6/P1rel_invitro_ctrl_cyt__barplot_stemness.png',width=4000,height=4500,res=600)
+png('../../../Manuscript/figures/images/Fig6/P1rel_invitro_ctrl_cyt__barplot_stemness.png',width=4000,height=4500,res=600)
 P1relinvitro.stemness
 dev.off()
 
@@ -250,16 +256,22 @@ comparisons <- list(c("Control", "Cytarabine"))
 custom_colors <- c("Control" = "#1f77b4", "Cytarabine" = "#ff7f0e")
 # Create the boxplot
 P6relinvitro.stemness <- ggplot(data, aes(x = Group, y = Stemness_Score, fill = Group)) +
-  geom_boxplot(aes(group = Group)) +  # Boxplot grouped by category
+  geom_boxplot(
+    aes(group = Group), 
+    outlier.shape = 16,   # Ensuring outliers are visible
+    outlier.size = 3,     # Adjusting outlier size for clarity
+    outlier.color = "black" # Outliers in black for contrast
+  ) +
+  stat_boxplot(geom = "errorbar", width = 0.2, color = "black") +  # Explicit error bars
   geom_signif(comparisons = comparisons, 
               map_signif_level = TRUE, 
-              step_increase = 0.1,  # Space between brackets
-              tip_length = 0.01,    # Controls bracket length
-              color = "black") +    # Ensure significance annotations are black
+              step_increase = 0.1,  
+              tip_length = 0.01,    
+              color = "black") +    
   xlab("Treatment Group") + 
   ylab("Stemness Score") +
-  scale_fill_manual(values = custom_colors) +  # Custom color scheme
-  theme_minimal() +  # Removes grey background
+  scale_fill_manual(values = custom_colors) +  
+  theme_minimal() +  
   ggtitle("P6-Relapse Stemness in-vitro") +
   theme(
     panel.border = element_blank(), 
@@ -274,9 +286,9 @@ P6relinvitro.stemness <- ggplot(data, aes(x = Group, y = Stemness_Score, fill = 
     axis.text.x = element_text(size = 18 , color = "black"),
     axis.text.y = element_text(size = 18, color = "black")
   ) +
-  NoLegend()  # Remove legend to match the reference plot
+  NoLegend()  # Remove legend for clarity
 
-png('../../../../../Manuscript/figures/images/Fig6/P6rel_invitro_ctrl_cyt__barplot_stemness.png',width=4000,height=4500,res=600)
+png('../../../Manuscript/figures/images/Fig6/P6rel_invitro_ctrl_cyt__barplot_stemness.png',width=4000,height=4500,res=600)
 P6relinvitro.stemness
 dev.off()
 
@@ -385,16 +397,22 @@ comparisons <- list(c("Control", "Cytarabine"))
 custom_colors <- c("Control" = "#1f77b4", "Cytarabine" = "#ff7f0e")
 # Create the boxplot
 P10relinvitro.stemness <- ggplot(data, aes(x = Group, y = Stemness_Score, fill = Group)) +
-  geom_boxplot(aes(group = Group)) +  # Boxplot grouped by category
+  geom_boxplot(
+    aes(group = Group), 
+    outlier.shape = 16,   # Ensuring outliers are visible
+    outlier.size = 3,     # Adjusting outlier size for clarity
+    outlier.color = "black" # Outliers in black for contrast
+  ) +
+  stat_boxplot(geom = "errorbar", width = 0.2, color = "black") +  # Explicit error bars
   geom_signif(comparisons = comparisons, 
               map_signif_level = TRUE, 
-              step_increase = 0.1,  # Space between brackets
-              tip_length = 0.01,    # Controls bracket length
-              color = "black") +    # Ensure significance annotations are black
+              step_increase = 0.1,  
+              tip_length = 0.01,    
+              color = "black") +    
   xlab("Treatment Group") + 
   ylab("Stemness Score") +
-  scale_fill_manual(values = custom_colors) +  # Custom color scheme
-  theme_minimal() +  # Removes grey background
+  scale_fill_manual(values = custom_colors) +  
+  theme_minimal() +  
   ggtitle("P10-Relapse Stemness in-vitro") +
   theme(
     panel.border = element_blank(), 
@@ -409,9 +427,9 @@ P10relinvitro.stemness <- ggplot(data, aes(x = Group, y = Stemness_Score, fill =
     axis.text.x = element_text(size = 18 , color = "black"),
     axis.text.y = element_text(size = 18, color = "black")
   ) +
-  NoLegend()  # Remove legend to match the reference plot
+  NoLegend()  # Remove legend for clarity
 
-png('../../../../../Manuscript/figures/images/Fig6/P10rel_invitro_ctrl_cyt__barplot_stemness.png',width=4000,height=4500,res=600)
+png('../../../Manuscript/figures/images/Fig6/P10rel_invitro_ctrl_cyt__barplot_stemness.png',width=4000,height=4500,res=600)
 P10relinvitro.stemness
 dev.off()
 
@@ -561,7 +579,7 @@ P1ini.stemness <- ggplot(data, aes(x = Group, y = Stemness_Score, fill = Group))
   ) +
   NoLegend()  # Remove legend to match the reference plot
 
-png('../../../../../Manuscript/figures/images/Fig6/P1ini_invivo_ctrl_cyt_mrd_barplot_stemness.png',width=6000,height=4500,res=600)
+png('../../../Manuscript/figures/images/Fig6/P1ini_invivo_ctrl_cyt_mrd_barplot_stemness.png',width=6000,height=4500,res=600)
 print(P1ini.stemness)
 dev.off()
 
@@ -678,18 +696,24 @@ data$Group <- factor(data$Group, levels = c("Control", "Dox-Dex-Vin", "Cytarabin
 comparisons <- list(c("Control", "Dox-Dex-Vin"),c("Control", "Cytarabine"), c("Dox-Dex-Vin", "Cytarabine"))
 # Define custom colors for each group
 custom_colors <- c("Control" = "#1f77b4", "Dox-Dex-Vin" = "#2ca02c", "Cytarabine" = "#ff7f0e")
-# Create the boxplot
+# Create the boxplot with explicit definition of elements
 P10ini.stemness <- ggplot(data, aes(x = Group, y = Stemness_Score, fill = Group)) +
-  geom_boxplot(aes(group = Group)) +  # Boxplot grouped by category
+  geom_boxplot(
+    aes(group = Group), 
+    outlier.shape = 16,   # Ensure outliers are visible
+    outlier.size = 3,     # Adjusting outlier size for clarity
+    outlier.color = "black" # Outliers in black for contrast
+  ) +
+  stat_boxplot(geom = "errorbar", width = 0.2, color = "black") +  # Explicit error bars
   geom_signif(comparisons = comparisons, 
               map_signif_level = TRUE, 
-              step_increase = 0.1,  # Space between brackets
-              tip_length = 0.01,    # Controls bracket length
-              color = "black") +    # Ensure significance annotations are black
+              step_increase = 0.1,  
+              tip_length = 0.01,    
+              color = "black") +    
   xlab("Treatment Group") + 
   ylab("Stemness Score") +
-  scale_fill_manual(values = custom_colors) +  # Custom color scheme
-  theme_minimal() +  # Removes grey background
+  scale_fill_manual(values = custom_colors) +  
+  theme_minimal() +  
   ggtitle("P10-Initial Stemness in-vivo") +
   theme(
     panel.border = element_blank(), 
@@ -698,15 +722,15 @@ P10ini.stemness <- ggplot(data, aes(x = Group, y = Stemness_Score, fill = Group)
     axis.line = element_line(colour = "black"),
     plot.title = element_text(hjust = .5, size = 20, face = 'bold'),
     legend.title = element_text(size = 20),
-    legend.text = element_text(size = 18),
+    legend.text = element_text(size =  18),
     axis.title.x = element_text(size = 20, color = "black"),
     axis.title.y = element_text(size = 20, color = "black"),
     axis.text.x = element_text(size = 18, color = "black"),
     axis.text.y = element_text(size = 18, color = "black")
   ) +
-  NoLegend()  # Remove legend to match the reference plot
+  NoLegend()  # Remove legend for clarity
 
-png('../../../../../Manuscript/figures/images/Fig6/P10ini_invivo_ctrl_cyt_mrd_barplot_stemness.png',width=6000,height=4500,res=600)
+png('../../../Manuscript/figures/images/Fig6/P10ini_invivo_ctrl_cyt_mrd_barplot_stemness.png',width=6000,height=4500,res=600)
 print(P10ini.stemness)
 dev.off()
 
@@ -872,21 +896,37 @@ df = df[df$Day.29.morphologic.Response != "Unknown",]
 
 png("/g/korbel/Costea/Manuscript/figures/images/Fig6/teacheybulkgenescore.png",width=5500,height=4000,res=600)
 p = ggplot(data=df, aes(x=Day.29.morphologic.Response, y=Set1, fill=Day.29.morphologic.Response)) +
-  geom_boxplot(aes(group=Day.29.morphologic.Response)) +
-  geom_signif(comparisons = comparing_groups, map_signif_level = FALSE, label = "p.format", step_increase = 0.1, tip_length = 0.01) +
+  geom_boxplot(
+    aes(group = Day.29.morphologic.Response), 
+    outlier.shape = 16,   # Ensuring outliers are visible
+    outlier.size = 3,     # Adjusting outlier size for clarity
+    outlier.color = "black", # Outliers in black for contrast
+    width = 0.6           # Adjusting box width for better readability
+  ) +
+  stat_boxplot(geom = "errorbar", width = 0.2, color = "black") +  # Explicit error bars
+  geom_signif(comparisons = comparing_groups, 
+              map_signif_level = TRUE,  # Displays stars instead of numeric p-values
+              step_increase = 0.1, 
+              tip_length = 0.01, 
+              color = "black") +
   xlab("Day 29 morphological response") +
   ylab("Stemness score") +
   theme_minimal() +  # Removes grey background
-  scale_fill_manual(values=c("M1"= "#C2C572", "M2"="#F4A261", "M3"= "#C08497")) + # Custom colors
-  NoLegend() + ggtitle("Stemness-based risk profiles in 1,300 T-ALL RNA samples") + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
-                                                                                          panel.grid.minor = element_blank(),axis.line = element_line(colour = "black"),
-                                                                                          plot.title = element_text(hjust = .5, size = 18, face = 'bold'),
-                                                                                          legend.title = element_text(size = 20),
-                                                                                          legend.text = element_text(size = 18),
-                                                                                          axis.title.x = element_text(size = 20, color = "black"),
-                                                                                          axis.title.y = element_text(size = 20, color = "black"),
-                                                                                          axis.text.x = element_text(size = 18, color = "black"),
-                                                                                          axis.text.y = element_text(size = 18, color = "black")
+  scale_fill_manual(values = c("M1" = "#C2C572", "M2" = "#F4A261", "M3" = "#C08497")) + # Custom colors
+  NoLegend() + 
+  ggtitle("Stemness-based risk profiles in 1,300 T-ALL RNA samples") +
+  theme(
+    panel.border = element_blank(), 
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    axis.line = element_line(colour = "black"),
+    plot.title = element_text(hjust = .5, size = 18, face = 'bold'),
+    legend.title = element_text(size = 20),
+    legend.text = element_text(size = 18),
+    axis.title.x = element_text(size = 20, color = "black"),
+    axis.title.y = element_text(size = 20, color = "black"),
+    axis.text.x = element_text(size = 18, color = "black"),
+    axis.text.y = element_text(size = 18, color = "black")
   )
 p
 dev.off()
