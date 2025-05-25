@@ -1,4 +1,5 @@
-# Analyses from Costea et al. 2024
+# Analyses from Costea et al. 2024 [![DOI](https://zenodo.org/badge/911291989.svg)](https://doi.org/10.5281/zenodo.15512112)
+
 
 Repository containing the full set of scripts for the generation and visualization of the computational analyses in [Costea et al., 2024](https://doi.org/10.1101/2024.06.24.600391).
 
